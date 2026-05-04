@@ -1,124 +1,79 @@
 local map = vim.keymap.set
 
--- Set leader keys
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
-map('n', '<leader>w', ':w<CR>', { desc = 'Save file' })
-map('n', '<leader>q', ':q<CR>', { desc = 'Quit window' })
-map('n', '<leader>Q', ':qa<CR>', { desc = 'Quit all' })
+-- File
+map('n', '<C-s>', '<cmd>w<cr>',  { desc = 'Save' })
+map('n', '<C-q>', '<cmd>q<cr>',  { desc = 'Quit' })
 
--- Exit modes with kj
-map('i', 'kj', '<Esc>', { desc = 'Exit Insert Mode' })
-map('v', 'kj', '<Esc>', { desc = 'Exit Visual Mode' })
-map('s', 'kj', '<Esc>', { desc = 'Exit Select Mode' })
+-- Escape
+map({ 'i', 'v', 's' }, 'kj', '<Esc>',       { desc = 'Exit mode' })
+map('n', '<Esc>',            '<cmd>nohl<cr>', { desc = 'Clear search highlight' })
 
--- Better window navigation
-map('n', '<C-h>', '<C-w>h', { desc = 'Move to left window' })
-map('n', '<C-j>', '<C-w>j', { desc = 'Move to bottom window' })
-map('n', '<C-k>', '<C-w>k', { desc = 'Move to top window' })
-map('n', '<C-l>', '<C-w>l', { desc = 'Move to right window' })
+-- Windows
+map('n', '<C-h>', '<C-w>h', { desc = 'Window left' })
+map('n', '<C-j>', '<C-w>j', { desc = 'Window down' })
+map('n', '<C-k>', '<C-w>k', { desc = 'Window up' })
+map('n', '<C-l>', '<C-w>l', { desc = 'Window right' })
 
--- Resize windows with arrows
-map('n', '<C-Up>', ':resize +2<CR>', { desc = 'Increase window height' })
-map('n', '<C-Down>', ':resize -2<CR>', { desc = 'Decrease window height' })
-map('n', '<C-Left>', ':vertical resize -2<CR>', { desc = 'Decrease window width' })
-map('n', '<C-Right>', ':vertical resize +2<CR>', { desc = 'Increase window width' })
+-- Buffers
+map('n', '<Tab>',   '<cmd>bnext<cr>',     { desc = 'Next buffer' })
+map('n', '<S-Tab>', '<cmd>bprevious<cr>', { desc = 'Prev buffer' })
+map('n', '<C-w>',   function() require('mini.bufremove').delete() end,        { desc = 'Delete buffer' })
+map('n', '<C-S-w>', function() require('mini.bufremove').delete(0, true) end, { desc = 'Force delete buffer' })
 
--- Better indenting
-map('v', '<', '<gv', { desc = 'Indent left and reselect' })
-map('v', '>', '>gv', { desc = 'Indent right and reselect' })
+-- Editing
+map('v', '<', '<gv',               { desc = 'Indent left' })
+map('v', '>', '>gv',               { desc = 'Indent right' })
+map('v', 'J', ":m '>+1<cr>gv=gv", { desc = 'Move lines down' })
+map('v', 'K', ":m '<-2<cr>gv=gv", { desc = 'Move lines up' })
 
--- Move text up and down
-map('v', 'J', ":m '>+1<CR>gv=gv", { desc = 'Move text down' })
-map('v', 'K', ":m '<-2<CR>gv=gv", { desc = 'Move text up' })
+-- Navigation
+map('n', '<C-d>', '<C-d>zz', { desc = 'Scroll down (centered)' })
+map('n', '<C-u>', '<C-u>zz', { desc = 'Scroll up (centered)' })
+map('n', 'n',     'nzzzv',   { desc = 'Next result (centered)' })
+map('n', 'N',     'Nzzzv',   { desc = 'Prev result (centered)' })
 
--- Keep cursor centered when scrolling
-map('n', '<C-d>', '<C-d>zz', { desc = 'Scroll down and center' })
-map('n', '<C-u>', '<C-u>zz', { desc = 'Scroll up and center' })
-map('n', 'n', 'nzzzv', { desc = 'Next search result and center' })
-map('n', 'N', 'Nzzzv', { desc = 'Previous search result and center' })
+-- LSP
+map('n', 'gd', vim.lsp.buf.definition,     { desc = 'Definition' })
+map('n', 'gD', vim.lsp.buf.declaration,    { desc = 'Declaration' })
+map('n', 'gi', vim.lsp.buf.implementation, { desc = 'Implementation' })
+map('n', 'gr', vim.lsp.buf.references,     { desc = 'References' })
+map('n', 'K',  vim.lsp.buf.hover,          { desc = 'Hover docs' })
+map('n', '<leader>r', vim.lsp.buf.rename)
+map('n', '<C-a>',   vim.lsp.buf.code_action, { desc = 'Code action' })
+map('n', '<C-S-f>', function() vim.lsp.buf.format({ async = true }) end, { desc = 'Format' })
 
--- Clear search highlight
-map('n', '<Esc>', ':nohl<CR>', { desc = 'Clear search highlight' })
+-- Diagnostics
+map('n', '[d',    vim.diagnostic.goto_prev,  { desc = 'Prev diagnostic' })
+map('n', ']d',    vim.diagnostic.goto_next,  { desc = 'Next diagnostic' })
+map('n', '<C-e>', vim.diagnostic.open_float, { desc = 'Diagnostic float' })
 
-map('n', 'gd', function() vim.lsp.buf.definition() end, { desc = 'Go to Definition' })
-map('n', 'gD', function() vim.lsp.buf.declaration() end, { desc = 'Go to Declaration' })
-map('n', 'gi', function() vim.lsp.buf.implementation() end, { desc = 'Go to Implementation' })
-map('n', 'gr', function() vim.lsp.buf.references() end, { desc = 'Show References' })
-map('n', 'K', function() vim.lsp.buf.hover() end, { desc = 'Show Hover Information' })
-map('n', '<leader>o', function() vim.lsp.buf.organize_imports() end, { desc = 'Organize Imports' })
-map('n', '<leader>r', function() vim.lsp.buf.rename() end, { desc = 'Rename Symbol' })
-map('n', '<leader>ca', function() vim.lsp.buf.code_action() end, { desc = 'Code Actions' })
-map('n', '<leader>f', function() vim.lsp.buf.format() end, { desc = 'Format Document' })
+-- Trouble
+map('n', '<C-t>',   '<cmd>Trouble diagnostics toggle<cr>',              { desc = 'Trouble: all' })
+map('n', '<C-S-t>', '<cmd>Trouble diagnostics toggle filter.buf=0<cr>', { desc = 'Trouble: buffer' })
 
-map('n', '[d', function() vim.diagnostic.goto_prev() end, { desc = 'Previous Diagnostic' })
-map('n', ']d', function() vim.diagnostic.goto_next() end, { desc = 'Next Diagnostic' })
-map('n', '<leader>de', function() vim.diagnostic.open_float() end, { desc = 'Show Diagnostic Error' })
-map('n', '<leader>dl', function() vim.diagnostic.setloclist() end, { desc = 'Diagnostics to Location List' })
+-- Telescope
+map('n', '<C-p>',   '<cmd>Telescope find_files<cr>',           { desc = 'Files' })
+map('n', '<C-f>',   '<cmd>Telescope live_grep<cr>',            { desc = 'Grep' })
+map('n', '<C-b>',   '<cmd>Telescope buffers<cr>',              { desc = 'Buffers' })
+map('n', '<C-S-r>', '<cmd>Telescope oldfiles<cr>',             { desc = 'Recent files' })
+map('n', '<C-S-o>', '<cmd>Telescope lsp_document_symbols<cr>', { desc = 'Symbols' })
 
--- Trouble (Diagnostic Panel)
-map('n', '<leader>xx', ':Trouble diagnostics toggle<CR>', { desc = 'Toggle Trouble' })
-map('n', '<leader>xw', ':Trouble diagnostics toggle filter.buf=0<CR>', { desc = 'Trouble Workspace Diagnostics' })
-map('n', '<leader>xd', ':Trouble diagnostics toggle filter.buf=0<CR>', { desc = 'Trouble Document Diagnostics' })
-map('n', '<leader>xq', ':Trouble quickfix toggle<CR>', { desc = 'Trouble Quickfix' })
-map('n', '<leader>xl', ':Trouble loclist toggle<CR>', { desc = 'Trouble Location List' })
+-- File explorer
+map('n', '<C-n>',   '<cmd>NvimTreeToggle<cr>',   { desc = 'Explorer toggle' })
+map('n', '<C-S-n>', '<cmd>NvimTreeFindFile<cr>',  { desc = 'Explorer: find file' })
 
-map('n', '<leader>ff', ':Telescope find_files<CR>', { desc = 'Find Files' })
-map('n', '<leader>fg', ':Telescope live_grep<CR>', { desc = 'Live Grep' })
-map('n', '<leader>fb', ':Telescope buffers<CR>', { desc = 'Find Buffers' })
-map('n', '<leader>fh', ':Telescope help_tags<CR>', { desc = 'Help Tags' })
-map('n', '<leader>fr', ':Telescope oldfiles<CR>', { desc = 'Recent Files' })
-map('n', '<leader>fc', ':Telescope commands<CR>', { desc = 'Commands' })
-map('n', '<leader>fk', ':Telescope keymaps<CR>', { desc = 'Keymaps' })
-map('n', '<leader>fs', ':Telescope lsp_document_symbols<CR>', { desc = 'Document Symbols' })
-map('n', '<leader>fw', ':Telescope lsp_workspace_symbols<CR>', { desc = 'Workspace Symbols' })
+-- Git (Gitsigns)
+-- kept as <leader> — <C-g> is a built-in Vim motion (file info)
+map('n', '<leader>gb', '<cmd>Gitsigns toggle_current_line_blame<cr>', { desc = 'Git blame' })
+map('n', '<leader>gp', '<cmd>Gitsigns preview_hunk<cr>',              { desc = 'Git preview hunk' })
+map('n', '<leader>gs', '<cmd>Gitsigns stage_hunk<cr>',                { desc = 'Git stage hunk' })
+map('n', '<leader>gr', '<cmd>Gitsigns reset_hunk<cr>',                { desc = 'Git reset hunk' })
 
--- FZF (alternative fuzzy finder)
-map('n', '<C-p>', ':Files<CR>', { noremap = true, silent = true, desc = 'FZF Files' })
-
-map('n', '<leader>e', ':NvimTreeToggle<CR>', { desc = 'Toggle File Explorer' })
-map('n', '<leader>ef', ':NvimTreeFindFile<CR>', { desc = 'Find Current File in Explorer' })
-
-map('n', '<Tab>', ':bnext<CR>', { desc = 'Next Buffer' })
-map('n', '<S-Tab>', ':bprevious<CR>', { desc = 'Previous Buffer' })
-map('n', '<leader>bd', ':lua require("mini.bufremove").delete()<CR>', { desc = 'Delete Buffer' })
-map('n', '<leader>bD', ':lua require("mini.bufremove").delete(0, true)<CR>', { desc = 'Force Delete Buffer' })
-
-map('n', '<leader>gb', ':Gitsigns toggle_current_line_blame<CR>', { desc = 'Toggle Git Blame' })
-map('n', '<leader>gp', ':Gitsigns preview_hunk<CR>', { desc = 'Preview Git Hunk' })
-map('n', '<leader>gr', ':Gitsigns reset_hunk<CR>', { desc = 'Reset Git Hunk' })
-map('n', '<leader>gs', ':Gitsigns stage_hunk<CR>', { desc = 'Stage Git Hunk' })
-map('n', '<leader>gu', ':Gitsigns undo_stage_hunk<CR>', { desc = 'Undo Stage Git Hunk' })
-
-map('n', '<leader>tf', ':ToggleTerm direction=float<CR>', { desc = 'Toggle Floating Terminal' })
-map('n', '<leader>th', ':ToggleTerm direction=horizontal<CR>', { desc = 'Toggle Horizontal Terminal' })
-map('n', '<leader>tv', ':ToggleTerm direction=vertical<CR>', { desc = 'Toggle Vertical Terminal' })
-
--- Terminal mode mappings
-map('t', '<Esc>', [[<C-\><C-n>]], { desc = 'Exit Terminal Mode' })
-map('t', 'kj', [[<C-\><C-n>]], { desc = 'Exit Terminal Mode' })
-
-map('n', '<leader>S', ':lua require("spectre").toggle()<CR>', { desc = 'Toggle Spectre (Find & Replace)' })
-map('n', '<leader>sw', ':lua require("spectre").open_visual({select_word=true})<CR>', { desc = 'Search Current Word' })
-map('v', '<leader>sw', ':lua require("spectre").open_visual()<CR>', { desc = 'Search Current Selection' })
-
--- Toggle line numbers
-map('n', '<leader>n', ':set number! relativenumber!<CR>', { desc = 'Toggle Line Numbers' })
-
--- Toggle word wrap
-map('n', '<leader>tw', ':set wrap!<CR>', { desc = 'Toggle Word Wrap' })
-
--- Yank to system clipboard
-map({'n', 'v'}, '<leader>y', '"+y', { desc = 'Yank to System Clipboard' })
-map('n', '<leader>Y', '"+Y', { desc = 'Yank Line to System Clipboard' })
-
--- Paste from system clipboard
-map({'n', 'v'}, '<leader>p', '"+p', { desc = 'Paste from System Clipboard' })
-map({'n', 'v'}, '<leader>P', '"+P', { desc = 'Paste Before from System Clipboard' })
-
--- Quick fix list navigation
-map('n', '<leader>co', ':copen<CR>', { desc = 'Open Quickfix List' })
-map('n', '<leader>cc', ':cclose<CR>', { desc = 'Close Quickfix List' })
-map('n', '[q', ':cprev<CR>', { desc = 'Previous Quickfix Item' })
-map('n', ']q', ':cnext<CR>', { desc = 'Next Quickfix Item' })
+-- Terminal
+map('n', '<C-`>',   '<cmd>ToggleTerm direction=float<cr>',      { desc = 'Terminal float' })
+map('n', '<C-S-`>', '<cmd>ToggleTerm direction=horizontal<cr>', { desc = 'Terminal horizontal' })
+map('t', '<Esc>', [[<C-\><C-n>]], { desc = 'Exit terminal mode' })
+map('t', 'kj',   [[<C-\><C-n>]], { desc = 'Exit terminal mode' })

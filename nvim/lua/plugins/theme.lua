@@ -20,7 +20,31 @@ return {
                 contrast = "hard",
                 transparent_mode = true,
             })
-            vim.cmd("colorscheme gruvbox")
+            -- vim.cmd("colorscheme gruvbox")
+        end,
+    },
+    {
+        "rebelot/kanagawa.nvim",
+        lazy = false,
+        priority = 1000,
+        config = function()
+            require("kanagawa").setup({
+                contrast = "hard",
+                transparent_mode = true,
+            })
+            -- vim.cmd("colorscheme kanagawa-dragon")
+        end,
+    },
+    {
+        "saeeedhany/parchment.nvim",
+        lazy = false,
+        priority = 1000,
+        config = function()
+            require("parchment").setup({
+                contrast = "hard",
+                transparent_mode = true,
+            })
+            vim.cmd("colorscheme parchment")
         end,
     },
 }
