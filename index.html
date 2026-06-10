@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>saeeedhany — dotfiles & themes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --p-bg0:    #0f0e0d;
+    --p-bg1:    #141312;
+    --p-bg2:    #1a1917;
+    --p-fg0:    #d4c9a8;
+    --p-fg1:    #b8ae90;
+    --p-fg2:    #a89f88;
+    --p-orange: #d4622a;
+    --p-yellow: #c8a94a;
+    --p-green:  #4a9e5c;
+    --p-blue:   #3a8fc4;
+    --p-cyan:   #4aa8a1;
+    --p-red:    #cc3a3a;
+    --p-muted:  #4a4640;
+    --o-bg1:    #222424;
+    --o-bg2:    #2a2d2d;
+    --o-fg0:    #eeeeee;
+    --o-fg1:    #bbbbbb;
+    --o-fg2:    #8a8a8a;
+    --o-blue:   #5b8aad;
+    --o-cyan:   #4d9a94;
+    --o-green:  #5a9e6f;
+    --o-yellow: #a89a6a;
+    --o-purple: #9c7aaa;
+    --o-red:    #cc5555;
+    --o-muted:  #4a4e4e;
+    --bg:       #141514;
+    --surface:  #1c1e1d;
+    --line:     #2a2c2b;
+    --text:     #d0ccc0;
+    --dim:      #7a7870;
+    --accent-warm: #d4622a;
+    --accent-cool: #5b8aad;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 3rem;
+    background: rgba(20, 21, 20, 0.88);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-logo {
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav-logo .tilde { color: var(--accent-warm); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.78rem;
+    color: var(--dim);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    padding-top: 57px; /* nav height */
+    cursor: default;
+    overflow: hidden;
+  }
+
+  /* the vertical seam between the two halves */
+  .hero-seam {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 50%;
+    width: 1px;
+    z-index: 10;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      var(--p-orange) 30%,
+      var(--o-blue) 70%,
+      transparent 100%
+    );
+    opacity: 0.5;
+    transition: opacity 0.4s;
+    pointer-events: none;
+  }
+  .hero:hover .hero-seam { opacity: 0.85; }
+
+  .hero-half {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5rem 4rem;
+    overflow: hidden;
+    transition: background 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  .hero-half.warm { background: var(--p-bg1); }
+  .hero-half.cool { background: var(--o-bg1); }
+
+  /* mouse-follow radial glow — injected by JS via CSS custom props */
+  .hero-half::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    border-radius: 0;
+  }
+  .hero-half.warm::before {
+    background: radial-gradient(
+      500px circle at var(--mx, 40%) var(--my, 50%),
+      rgba(212,98,42,0.10) 0%,
+      transparent 70%
+    );
+  }
+  .hero-half.cool::before {
+    background: radial-gradient(
+      500px circle at var(--mx, 60%) var(--my, 50%),
+      rgba(91,138,173,0.10) 0%,
+      transparent 70%
+    );
+  }
+  .hero-half:hover::before { opacity: 1; }
+
+  /* ── hero text ── */
+  .hero-label {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 1.4rem;
+  }
+  .warm .hero-label { color: var(--p-orange); }
+  .cool .hero-label { color: var(--o-blue); }
+
+  .hero-name {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.9rem;
+    transition: opacity 0.3s;
+  }
+  .warm .hero-name { color: var(--p-fg0); }
+  .cool .hero-name { color: var(--o-fg0); }
+
+  .hero-sub {
+    font-size: 0.78rem;
+    font-weight: 300;
+    line-height: 1.85;
+    max-width: 320px;
+    margin-bottom: 2.5rem;
+  }
+  .warm .hero-sub { color: var(--p-fg2); }
+  .cool .hero-sub { color: var(--o-fg2); }
+
+  /* ── palette strip ── */
+  .palette-strip {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 2rem;
+    align-items: center;
+  }
+
+  .pal-swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
+    position: relative;
+    flex-shrink: 0;
+    cursor: default;
+    transform: scaleY(0.4);
+    opacity: 0;
+    transition:
+      transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
+      opacity 0.25s ease;
+  }
+  /* staggered reveal on hover of the half */
+  .hero-half:hover .pal-swatch { transform: scaleY(1); opacity: 1; }
+  .hero-half:hover .pal-swatch:nth-child(1) { transition-delay: 0ms; }
+  .hero-half:hover .pal-swatch:nth-child(2) { transition-delay: 30ms; }
+  .hero-half:hover .pal-swatch:nth-child(3) { transition-delay: 60ms; }
+  .hero-half:hover .pal-swatch:nth-child(4) { transition-delay: 90ms; }
+  .hero-half:hover .pal-swatch:nth-child(5) { transition-delay: 120ms; }
+  .hero-half:hover .pal-swatch:nth-child(6) { transition-delay: 150ms; }
+  .hero-half:hover .pal-swatch:nth-child(7) { transition-delay: 180ms; }
+  .hero-half:hover .pal-swatch:nth-child(8) { transition-delay: 210ms; }
+
+  .pal-swatch::after {
+    content: attr(data-name);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.55rem;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    color: var(--dim);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .pal-swatch:hover::after { opacity: 1; }
+
+  .palette-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-left: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.3s 0.25s;
+  }
+  .hero-half:hover .palette-label { opacity: 1; }
+  .warm .palette-label { color: var(--p-muted); }
+  .cool .palette-label { color: var(--o-muted); }
+
+  /* ── mini neovim preview ── */
+  .nvim-preview {
+    border-radius: 2px;
+    overflow: hidden;
+    font-size: 0.67rem;
+    line-height: 1.7;
+    border: 1px solid;
+    flex-shrink: 0;
+    max-width: 100%;
+    transform: translateY(8px);
+    opacity: 0;
+    transition:
+      transform 0.45s cubic-bezier(0.4,0,0.2,1) 0.05s,
+      opacity 0.35s ease 0.05s;
+  }
+  .hero-half:hover .nvim-preview {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .warm .nvim-preview {
+    background: var(--p-bg0);
+    border-color: var(--p-muted);
+  }
+  .cool .nvim-preview {
+    background: #191b1b;
+    border-color: var(--o-muted);
+  }
+
+  .nvim-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.58rem;
+    letter-spacing: 0.06em;
+  }
+  .warm .nvim-bar { background: var(--p-bg2); color: var(--p-fg2); }
+  .cool .nvim-bar { background: var(--o-bg2); color: var(--o-fg2); }
+
+  .nvim-bar-mode {
+    padding: 0 0.4rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    font-size: 0.6rem;
+  }
+  .warm .nvim-bar-mode { background: var(--p-orange); color: var(--p-bg0); }
+  .cool .nvim-bar-mode { background: var(--o-blue);   color: var(--o-bg1); }
+
+  .nvim-bar-name { opacity: 0.7; }
+  .nvim-bar-pos  { opacity: 0.5; }
+
+  .nvim-body { padding: 0.5rem 0; }
+
+  .nvim-line {
+    display: flex;
+    gap: 0;
+    padding: 0 0;
+  }
+  .nvim-ln {
+    min-width: 2.2rem;
+    text-align: right;
+    padding-right: 0.65rem;
+    user-select: none;
+    font-size: 0.6rem;
+  }
+  .warm .nvim-ln { color: var(--p-muted); }
+  .cool .nvim-ln { color: var(--o-muted); }
+
+  .warm .nvim-ln.cur { color: var(--p-fg2); }
+  .cool .nvim-ln.cur { color: var(--o-fg2); }
+
+  .nvim-code { padding-right: 1rem; }
+
+  /* syntax token classes */
+  .tk-kw    { color: var(--p-orange); }
+  .tk-fn    { color: var(--p-blue); }
+  .tk-str   { color: var(--p-green); }
+  .tk-num   { color: var(--p-yellow); }
+  .tk-cmt   { color: var(--p-muted); font-style: italic; }
+  .tk-type  { color: var(--p-yellow); }
+  .tk-var   { color: var(--p-fg0); }
+  .tk-op    { color: var(--p-fg2); }
+  .tk-punc  { color: var(--p-fg2); }
+
+  .ok-kw    { color: var(--o-purple); }
+  .ok-fn    { color: var(--o-blue); }
+  .ok-str   { color: var(--o-green); }
+  .ok-num   { color: var(--o-yellow); }
+  .ok-cmt   { color: var(--o-muted); font-style: italic; }
+  .ok-type  { color: var(--o-yellow); }
+  .ok-var   { color: var(--o-fg0); }
+  .ok-op    { color: var(--o-fg2); }
+  .ok-punc  { color: var(--o-fg2); }
+
+  .nvim-cur-line {
+    display: flex;
+  }
+  .warm .nvim-cur-line { background: var(--p-bg2); }
+  .cool .nvim-cur-line { background: var(--o-bg2); }
+
+  /* ── hero tags ── */
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 1.75rem;
+  }
+  .tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    padding: 0.25rem 0.65rem;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+  .warm .tag { background: var(--p-bg2); color: var(--p-fg1); border: 1px solid var(--p-muted); }
+  .cool .tag { background: var(--o-bg2); color: var(--o-fg1); border: 1px solid var(--o-muted); }
+
+  /* ── hero github link ── */
+  .hero-gh {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 1.75rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    opacity: 0.45;
+    transition: opacity 0.2s;
+    width: fit-content;
+  }
+  .hero-gh:hover { opacity: 1; }
+  .warm .hero-gh { color: var(--p-fg1); }
+  .cool .hero-gh { color: var(--o-fg1); }
+
+  /* ── SECTION COMMON ── */
+  section {
+    padding: 6rem 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+  }
+  .section-desc {
+    font-size: 0.82rem;
+    color: var(--dim);
+    max-width: 520px;
+    line-height: 1.8;
+    margin-bottom: 3.5rem;
+  }
+
+  /* ── TOOLS ── */
+  #tools { border-top: 1px solid var(--line); }
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .tool-card {
+    background: var(--surface);
+    padding: 2rem 2.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: background 0.25s;
+  }
+  .tool-card:hover { background: #212321; }
+  .tool-header { display: flex; justify-content: space-between; align-items: center; }
+  .tool-name { font-size: 0.9rem; font-weight: 500; color: var(--text); letter-spacing: 0.04em; }
+  .tool-type { font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
+  .tool-desc { font-size: 0.76rem; color: var(--dim); line-height: 1.7; }
+  .tool-detail { font-size: 0.7rem; line-height: 1.6; }
+
+  /* terminal block */
+  .term-block {
+    background: #111312;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 0.9rem 1rem;
+    font-size: 0.68rem;
+    line-height: 1.75;
+    overflow-x: auto;
+  }
+  .prompt { color: var(--p-green); }
+  .cmd    { color: var(--text); }
+  .cmt    { color: #5a5e5e; }
+  .kw     { color: var(--p-orange); }
+  .str    { color: var(--p-green); }
+  .num    { color: var(--p-yellow); }
+  .fn     { color: var(--o-blue); }
+  .type   { color: var(--p-yellow); }
+  .c-kw   { color: var(--o-purple); }
+  .c-str  { color: var(--o-green); }
+  .c-fn   { color: var(--o-blue); }
+  .c-type { color: var(--o-yellow); }
+  .c-cmt  { color: #5a5e5e; }
+
+  /* ── INSTALL ── */
+  #install { border-top: 1px solid var(--line); }
+  .install-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .install-block {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .install-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--line);
+    background: #1a1b1a;
+  }
+  .install-title { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); }
+  .install-accent-warm { color: var(--p-orange); }
+  .install-accent-cool { color: var(--o-blue); }
+  .install-body { padding: 1.25rem; font-size: 0.72rem; line-height: 1.8; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 2.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-left { font-size: 0.72rem; color: var(--dim); }
+  .footer-left a { color: var(--text); text-decoration: none; }
+  .footer-left a:hover { color: var(--p-orange); }
+  .footer-right { display: flex; gap: 2rem; }
+  .footer-right a { font-size: 0.72rem; color: var(--dim); text-decoration: none; letter-spacing: 0.08em; transition: color 0.2s; }
+  .footer-right a:hover { color: var(--text); }
+
+  /* ── DIVIDER ── */
+  .full-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--p-orange) 30%, var(--o-blue) 70%, transparent);
+    opacity: 0.3;
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ── BOOTSTRAP ── */
+  #bootstrap { border-top: 1px solid var(--line); }
+  .bootstrap-oneliner { margin-bottom: 3rem; }
+  .oneliner-label { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim); margin-bottom: 0.6rem; }
+  .oneliner-block {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #0d0f0e; border: 1px solid var(--o-blue); border-radius: 2px;
+    padding: 1rem 1.25rem; gap: 1rem;
+  }
+  .oneliner-content { display: flex; align-items: center; gap: 0.75rem; overflow-x: auto; flex: 1; }
+  .prompt-sym { color: var(--o-green); font-weight: 500; flex-shrink: 0; }
+  .oneliner-cmd { color: var(--o-fg0); font-size: 0.8rem; white-space: nowrap; letter-spacing: 0.02em; }
+  .copy-btn {
+    display: flex; align-items: center; gap: 0.4rem;
+    background: transparent; border: 1px solid var(--line); border-radius: 2px;
+    color: var(--dim); font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.1em; padding: 0.35rem 0.7rem;
+    cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+  }
+  .copy-btn:hover { border-color: var(--o-blue); color: var(--o-blue); }
+  .copy-btn.copied { border-color: var(--o-green); color: var(--o-green); }
+  .bootstrap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+  .bootstrap-col-label {
+    font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--dim); margin-bottom: 1.5rem; padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .bootstrap-step { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.4rem; }
+  .step-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 0.45rem; flex-shrink: 0; }
+  .step-body { flex: 1; }
+  .step-name { font-size: 0.8rem; font-weight: 500; color: var(--text); margin-bottom: 0.2rem; letter-spacing: 0.03em; }
+  .step-desc { font-size: 0.72rem; color: var(--dim); line-height: 1.7; }
+  .mono { color: var(--text); opacity: 0.75; }
+  .dot-green  { background: var(--o-green); }
+  .dot-blue   { background: var(--o-blue); }
+  .dot-orange { background: var(--p-orange); }
+  .dot-purple { background: var(--o-purple); }
+  .dot-cyan   { background: var(--o-cyan); }
+  .dot-yellow { background: var(--o-yellow); }
+  .dot-dim    { background: var(--o-muted); }
+  .distro-block { margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--line); }
+  .distro-block:last-of-type { border-bottom: none; }
+  .distro-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; }
+  .distro-name { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: var(--text); letter-spacing: 0.03em; }
+  .distro-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .distro-note { font-size: 0.68rem; color: var(--dim); line-height: 1.6; padding-left: 1rem; }
+  .distro-badge { font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.15rem 0.5rem; border-radius: 2px; border: 1px solid; }
+  .badge-primary   { color: var(--o-green);  border-color: var(--o-green);  opacity: 0.8; }
+  .badge-secondary { color: var(--o-yellow); border-color: var(--o-yellow); opacity: 0.7; }
+  .badge-dim       { color: var(--dim);      border-color: var(--o-muted);  opacity: 0.6; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-seam { display: none; }
+    .hero-half { padding: 3.5rem 1.5rem; }
+    section { padding: 4rem 1.5rem; }
+    .tools-grid, .install-grid, .bootstrap-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+    .nvim-preview { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; }
+    * { transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo"><span class="tilde">~</span>/saeeedhany</a>
+  <ul class="nav-links">
+    <li><a href="#tools">setup</a></li>
+    <li><a href="#install">install</a></li>
+    <li><a href="#bootstrap">bootstrap</a></li>
+    <li><a href="https://github.com/saeeedhany" target="_blank">github</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-seam"></div>
+
+  <!-- PARCHMENT half -->
+  <div class="hero-half warm">
+    <div class="hero-label">parchment</div>
+    <h1 class="hero-name">warm dark.<br>aged paper.</h1>
+    <p class="hero-sub">deep brown backgrounds, ochre foregrounds,<br>earthy syntax. built for long sessions.</p>
+
+    <!-- palette -->
+    <div class="palette-strip">
+      <div class="pal-swatch" style="background:#141312" data-name="bg"></div>
+      <div class="pal-swatch" style="background:#d4c9a8" data-name="fg"></div>
+      <div class="pal-swatch" style="background:#d4622a" data-name="orange"></div>
+      <div class="pal-swatch" style="background:#c8a94a" data-name="yellow"></div>
+      <div class="pal-swatch" style="background:#4a9e5c" data-name="green"></div>
+      <div class="pal-swatch" style="background:#3a8fc4" data-name="blue"></div>
+      <div class="pal-swatch" style="background:#4aa8a1" data-name="cyan"></div>
+      <div class="pal-swatch" style="background:#cc3a3a" data-name="red"></div>
+      <span class="palette-label">palette</span>
+    </div>
+
+    <!-- mini neovim preview -->
+    <div class="nvim-preview">
+      <div class="nvim-bar">
+        <span class="nvim-bar-mode">NORMAL</span>
+        <span class="nvim-bar-name">init.lua</span>
+        <span class="nvim-bar-pos">4:1</span>
+      </div>
+      <div class="nvim-body">
+        <div class="nvim-line"><span class="nvim-ln warm">1</span><span class="nvim-code"><span class="tk-cmt">-- parchment.nvim config</span></span></div>
+        <div class="nvim-line"><span class="nvim-ln warm">2</span><span class="nvim-code"></span></div>
+        <div class="nvim-line"><span class="nvim-ln warm">3</span><span class="nvim-code"><span class="tk-kw">local</span> <span class="tk-var">M</span> <span class="tk-op">=</span> <span class="tk-punc">{}</span></span></div>
+        <div class="nvim-line nvim-cur-line"><span class="nvim-ln warm cur">4</span><span class="nvim-code"><span class="tk-kw">function</span> <span class="tk-fn">M.setup</span><span class="tk-punc">(</span><span class="tk-var">opts</span><span class="tk-punc">)</span></span></div>
+        <div class="nvim-line"><span class="nvim-ln warm">5</span><span class="nvim-code">&nbsp;&nbsp;<span class="tk-var">vim</span><span class="tk-op">.</span><span class="tk-fn">cmd</span><span class="tk-punc">(</span><span class="tk-str">"colorscheme parchment"</span><span class="tk-punc">)</span></span></div>
+        <div class="nvim-line"><span class="nvim-ln warm">6</span><span class="nvim-code"><span class="tk-kw">end</span></span></div>
+        <div class="nvim-line"><span class="nvim-ln warm">7</span><span class="nvim-code"><span class="tk-kw">return</span> <span class="tk-var">M</span></span></div>
+      </div>
+    </div>
+
+    <div class="hero-tags">
+      <span class="tag">neovim</span>
+      <span class="tag">dark</span>
+      <span class="tag">3 variants</span>
+      <span class="tag">treesitter</span>
+    </div>
+    <a class="hero-gh warm" href="https://github.com/saeeedhany/parchment.nvim" target="_blank">
+      github.com/saeeedhany/parchment.nvim ↗
+    </a>
+  </div>
+
+  <!-- OVERCAST half -->
+  <div class="hero-half cool">
+    <div class="hero-label">overcast</div>
+    <h1 class="hero-name">cool gray.<br>steel focus.</h1>
+    <p class="hero-sub">desaturated slate, steel blues, dusty purples.<br>no warmth, just clarity.</p>
+
+    <!-- palette -->
+    <div class="palette-strip">
+      <div class="pal-swatch" style="background:#222424" data-name="bg"></div>
+      <div class="pal-swatch" style="background:#eeeeee" data-name="fg"></div>
+      <div class="pal-swatch" style="background:#5b8aad" data-name="blue"></div>
+      <div class="pal-swatch" style="background:#a89a6a" data-name="yellow"></div>
+      <div class="pal-swatch" style="background:#5a9e6f" data-name="green"></div>
+      <div class="pal-swatch" style="background:#9c7aaa" data-name="purple"></div>
+      <div class="pal-swatch" style="background:#4d9a94" data-name="cyan"></div>
+      <div class="pal-swatch" style="background:#cc5555" data-name="red"></div>
+      <span class="palette-label">palette</span>
+    </div>
+
+    <!-- mini neovim preview -->
+    <div class="nvim-preview">
+      <div class="nvim-bar">
+        <span class="nvim-bar-mode">NORMAL</span>
+        <span class="nvim-bar-name">config.h</span>
+        <span class="nvim-bar-pos">3:1</span>
+      </div>
+      <div class="nvim-body">
+        <div class="nvim-line"><span class="nvim-ln cool">1</span><span class="nvim-code"><span class="ok-cmt">/* overcast — dwm colors */</span></span></div>
+        <div class="nvim-line"><span class="nvim-ln cool">2</span><span class="nvim-code"></span></div>
+        <div class="nvim-line nvim-cur-line"><span class="nvim-ln cool cur">3</span><span class="nvim-code"><span class="ok-kw">static</span> <span class="ok-type">const</span> <span class="ok-type">char</span> <span class="ok-op">*</span><span class="ok-var">colors</span><span class="ok-punc">[][</span><span class="ok-num">3</span><span class="ok-punc">]</span> <span class="ok-op">=</span> <span class="ok-punc">{</span></span></div>
+        <div class="nvim-line"><span class="nvim-ln cool">4</span><span class="nvim-code">&nbsp;&nbsp;<span class="ok-punc">[</span><span class="ok-var">SchemeNorm</span><span class="ok-punc">]</span> <span class="ok-op">=</span> <span class="ok-punc">{</span> <span class="ok-str">"#bbbbbb"</span><span class="ok-punc">,</span> <span class="ok-str">"#222424"</span> <span class="ok-punc">},</span></span></div>
+        <div class="nvim-line"><span class="nvim-ln cool">5</span><span class="nvim-code">&nbsp;&nbsp;<span class="ok-punc">[</span><span class="ok-var">SchemeSel</span><span class="ok-punc">]</span>  <span class="ok-op">=</span> <span class="ok-punc">{</span> <span class="ok-str">"#eeeeee"</span><span class="ok-punc">,</span> <span class="ok-str">"#5b8aad"</span> <span class="ok-punc">},</span></span></div>
+        <div class="nvim-line"><span class="nvim-ln cool">6</span><span class="nvim-code"><span class="ok-punc">};</span></span></div>
+        <div class="nvim-line"><span class="nvim-ln cool">7</span><span class="nvim-code"></span></div>
+      </div>
+    </div>
+
+    <div class="hero-tags">
+      <span class="tag">neovim</span>
+      <span class="tag">dark + light</span>
+      <span class="tag">2 variants</span>
+      <span class="tag">dwm palette</span>
+    </div>
+    <a class="hero-gh cool" href="https://github.com/saeeedhany/overcast.nvim" target="_blank">
+      github.com/saeeedhany/overcast.nvim ↗
+    </a>
+  </div>
+</div>
+
+<div class="full-divider"></div>
+
+<!-- TOOLS -->
+<section id="tools">
+  <div class="reveal">
+    <div class="section-label">setup</div>
+    <h2 class="section-title">the full environment</h2>
+    <p class="section-desc">
+      every tool chosen for weight and control.
+      no electron, no bloat — just the unix stack.
+    </p>
+  </div>
+
+  <div class="tools-grid reveal">
+
+    <!-- NEOVIM -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <span class="tool-name">neovim</span>
+        <span class="tool-type">editor</span>
+      </div>
+      <p class="tool-desc">
+        lua config, lazy.nvim for plugins, treesitter for every language, lsp via mason.
+        the themes live here first.
+      </p>
+      <div class="term-block">
+        <div><span class="cmt">-- init.lua excerpt</span></div>
+        <div><span class="kw">require</span>(<span class="str">"lazy"</span>).setup({</div>
+        <div>&nbsp;&nbsp;{ <span class="str">"saeeedhany/parchment.nvim"</span>,</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;priority = <span class="num">1000</span> },</div>
+        <div>&nbsp;&nbsp;{ <span class="str">"nvim-treesitter/nvim-treesitter"</span> },</div>
+        <div>&nbsp;&nbsp;{ <span class="str">"neovim/nvim-lspconfig"</span> },</div>
+        <div>})</div>
+      </div>
+      <div class="tool-detail" style="color:var(--dim)">
+        lazy.nvim &nbsp;·&nbsp; treesitter &nbsp;·&nbsp; lsp &nbsp;·&nbsp; telescope &nbsp;·&nbsp; gitsigns
+      </div>
+    </div>
+
+    <!-- DWM -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <span class="tool-name">dwm</span>
+        <span class="tool-type">window manager</span>
+      </div>
+      <p class="tool-desc">
+        suckless dynamic window manager. patched and compiled from source.
+        overcast's background color is the exact dwm bar background.
+      </p>
+      <div class="term-block">
+        <div><span class="cmt">/* config.h — colors match overcast */</span></div>
+        <div><span class="c-kw">static</span> <span class="c-type">const</span> <span class="c-type">char</span> *colors[][<span class="num">3</span>] = {</div>
+        <div>&nbsp;&nbsp;<span class="cmt">/*          fg        bg        border */</span></div>
+        <div>&nbsp;&nbsp;[SchemeNorm] = { <span class="c-str">"#bbbbbb"</span>, <span class="c-str">"#222424"</span>, <span class="c-str">"#3a3d3d"</span> },</div>
+        <div>&nbsp;&nbsp;[SchemeSel]  = { <span class="c-str">"#eeeeee"</span>, <span class="c-str">"#5b8aad"</span>, <span class="c-str">"#5b8aad"</span> },</div>
+        <div>};</div>
+      </div>
+      <div class="tool-detail" style="color:var(--dim)">
+        tiling &nbsp;·&nbsp; patched from source &nbsp;·&nbsp; dmenu &nbsp;·&nbsp; slstatus
+      </div>
+    </div>
+
+    <!-- ST -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <span class="tool-name">st</span>
+        <span class="tool-type">terminal</span>
+      </div>
+      <p class="tool-desc">
+        suckless simple terminal. patched for scrollback and alpha.
+        colors pulled directly from the active theme's 16-color palette.
+      </p>
+      <div class="term-block">
+        <div><span class="cmt">/* config.h — parchment palette */</span></div>
+        <div><span class="c-kw">static</span> <span class="c-type">const</span> <span class="c-type">char</span> *colorname[] = {</div>
+        <div>&nbsp;&nbsp;<span class="c-str">"#141312"</span>, <span class="cmt">/* black   */</span></div>
+        <div>&nbsp;&nbsp;<span class="c-str">"#cc3a3a"</span>, <span class="cmt">/* red     */</span></div>
+        <div>&nbsp;&nbsp;<span class="c-str">"#4a9e5c"</span>, <span class="cmt">/* green   */</span></div>
+        <div>&nbsp;&nbsp;<span class="c-str">"#c8a94a"</span>, <span class="cmt">/* yellow  */</span></div>
+        <div>&nbsp;&nbsp;<span class="c-str">"#3a8fc4"</span>, <span class="cmt">/* blue    */</span></div>
+        <div>};</div>
+      </div>
+      <div class="tool-detail" style="color:var(--dim)">
+        scrollback patch &nbsp;·&nbsp; alpha patch &nbsp;·&nbsp; font patch
+      </div>
+    </div>
+
+    <!-- BASH -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <span class="tool-name">bash</span>
+        <span class="tool-type">shell</span>
+      </div>
+      <p class="tool-desc">
+        no zsh, no fish. bash with a clean prompt, useful aliases,
+        and a few scripts that handle the tedious parts.
+      </p>
+      <div class="term-block">
+        <div><span class="cmt"># .bashrc — prompt</span></div>
+        <div><span class="kw">PS1</span>=<span class="str">'\[\e[0;33m\]\u\[\e[0m\]</span></div>
+        <div><span class="str">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\[\e[0;90m\]@\h \[\e[0;34m\]\w</span></div>
+        <div><span class="str">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\[\e[0m\]\$ '</span></div>
+        <div></div>
+        <div><span class="cmt"># useful aliases</span></div>
+        <div><span class="kw">alias</span> v=<span class="str">'nvim'</span></div>
+        <div><span class="kw">alias</span> ls=<span class="str">'ls --color=auto'</span></div>
+        <div><span class="kw">alias</span> cfg=<span class="str">'cd ~/.config'</span></div>
+      </div>
+      <div class="tool-detail" style="color:var(--dim)">
+        custom prompt &nbsp;·&nbsp; aliases &nbsp;·&nbsp; utility scripts
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- INSTALL -->
+<section id="install">
+  <div class="reveal">
+    <div class="section-label">quick start</div>
+    <h2 class="section-title">get it running</h2>
+    <p class="section-desc">
+      both themes follow the same install pattern.
+      one line to switch between them at any time.
+    </p>
+  </div>
+
+  <div class="install-grid reveal">
+
+    <div class="install-block">
+      <div class="install-header">
+        <span class="install-title">parchment.nvim</span>
+        <span class="install-accent-warm">lazy.nvim</span>
+      </div>
+      <div class="install-body">
+        <div class="term-block">
+          <div>{</div>
+          <div>&nbsp;&nbsp;<span class="str">"saeeedhany/parchment.nvim"</span>,</div>
+          <div>&nbsp;&nbsp;priority = <span class="num">1000</span>,</div>
+          <div>&nbsp;&nbsp;config = <span class="kw">function</span>()</div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">require</span>(<span class="str">"parchment"</span>).<span class="fn">setup</span>({})</div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--p-cyan)">vim</span>.<span class="fn">cmd</span>(<span class="str">"colorscheme parchment"</span>)</div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt">-- or: parchment-ember</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt">-- or: parchment-manuscript</span></div>
+          <div>&nbsp;&nbsp;<span class="kw">end</span>,</div>
+          <div>}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="install-block">
+      <div class="install-header">
+        <span class="install-title">overcast.nvim</span>
+        <span class="install-accent-cool">lazy.nvim</span>
+      </div>
+      <div class="install-body">
+        <div class="term-block">
+          <div>{</div>
+          <div>&nbsp;&nbsp;<span class="c-str">"saeeedhany/overcast.nvim"</span>,</div>
+          <div>&nbsp;&nbsp;priority = <span class="num">1000</span>,</div>
+          <div>&nbsp;&nbsp;config = <span class="c-kw">function</span>()</div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-fn">require</span>(<span class="c-str">"overcast"</span>).<span class="c-fn">setup</span>({})</div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--o-cyan)">vim</span>.<span class="c-fn">cmd</span>(<span class="c-str">"colorscheme overcast"</span>)</div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-cmt">-- or: overcast-dawn</span></div>
+          <div>&nbsp;&nbsp;<span class="c-kw">end</span>,</div>
+          <div>}</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- BOOTSTRAP -->
+<section id="bootstrap">
+  <div class="reveal">
+    <div class="section-label">new machine</div>
+    <h2 class="section-title">one line. full environment.</h2>
+    <p class="section-desc">
+      fresh machine to complete setup. clones dotfiles, builds suckless tools from source,
+      configures neovim, bash, x11, fonts, and scripts. supports arch and minimal distros.
+    </p>
+  </div>
+
+  <div class="bootstrap-oneliner reveal">
+    <div class="oneliner-label">run this on the new machine</div>
+    <div class="oneliner-block" id="oneliner-block">
+      <div class="oneliner-content">
+        <span class="prompt-sym">$</span>
+        <span class="oneliner-cmd" id="oneliner-text">bash &lt;(curl -fsSL https://saeeedhany.github.io/dotfiles/install.sh)</span>
+      </div>
+      <button class="copy-btn" id="copy-btn" onclick="copyOneliner()" title="copy to clipboard">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span id="copy-label">copy</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="bootstrap-grid reveal">
+
+    <div class="bootstrap-col">
+      <div class="bootstrap-col-label">what gets set up</div>
+
+      <div class="bootstrap-step">
+        <div class="step-dot dot-green"></div>
+        <div class="step-body">
+          <div class="step-name">dotfiles</div>
+          <div class="step-desc">clones github.com/saeeedhany/dotfiles &rarr; <span class="mono">~/.dotfiles</span></div>
+        </div>
+      </div>
+
+      <div class="bootstrap-step">
+        <div class="step-dot dot-blue"></div>
+        <div class="step-body">
+          <div class="step-name">neovim</div>
+          <div class="step-desc">latest build + symlinks <span class="mono">~/.config/nvim</span>. lazy.nvim auto-installs plugins on first launch.</div>
+        </div>
+      </div>
+
+      <div class="bootstrap-step">
+        <div class="step-dot dot-orange"></div>
+        <div class="step-body">
+          <div class="step-name">suckless suite</div>
+          <div class="step-desc">dwm &middot; st &middot; dmenu &middot; slstatus &mdash; all compiled from source with your patched <span class="mono">config.h</span></div>
+        </div>
+      </div>
+
+      <div class="bootstrap-step">
+        <div class="step-dot dot-purple"></div>
+        <div class="step-body">
+          <div class="step-name">bash</div>
+          <div class="step-desc">symlinks <span class="mono">.bashrc</span> and <span class="mono">.bash_profile</span> &mdash; prompt, aliases, utility scripts</div>
+        </div>
+      </div>
+
+      <div class="bootstrap-step">
+        <div class="step-dot dot-cyan"></div>
+        <div class="step-body">
+          <div class="step-name">fonts &amp; x11</div>
+          <div class="step-desc">JetBrainsMono Nerd Font, <span class="mono">.xinitrc</span>, <span class="mono">.Xresources</span> merged via xrdb</div>
+        </div>
+      </div>
+
+      <div class="bootstrap-step">
+        <div class="step-dot dot-dim"></div>
+        <div class="step-body">
+          <div class="step-name">scripts + misc</div>
+          <div class="step-desc">dotfiles/bin &rarr; <span class="mono">~/bin</span> &nbsp;&middot;&nbsp; feh &middot; picom &middot; dunst &middot; maim &middot; xdotool</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bootstrap-col">
+      <div class="bootstrap-col-label">distro support</div>
+
+      <div class="distro-block">
+        <div class="distro-row">
+          <div class="distro-name"><span class="distro-dot dot-green"></span>arch linux</div>
+          <div class="distro-badge badge-primary">primary</div>
+        </div>
+        <div class="distro-note">pacman + yay. everything native. suckless patches preserved.</div>
+      </div>
+
+      <div class="distro-block">
+        <div class="distro-row">
+          <div class="distro-name"><span class="distro-dot dot-yellow"></span>debian / ubuntu</div>
+          <div class="distro-badge badge-secondary">supported</div>
+        </div>
+        <div class="distro-note">apt-based. neovim via appimage. suckless compiled from source.</div>
+      </div>
+
+      <div class="distro-block">
+        <div class="distro-row">
+          <div class="distro-name"><span class="distro-dot dot-yellow"></span>fedora</div>
+          <div class="distro-badge badge-secondary">supported</div>
+        </div>
+        <div class="distro-note">dnf-based. same suckless source path.</div>
+      </div>
+
+      <div class="distro-block">
+        <div class="distro-row">
+          <div class="distro-name"><span class="distro-dot dot-dim"></span>others</div>
+          <div class="distro-badge badge-dim">manual</div>
+        </div>
+        <div class="distro-note">script exits early &mdash; clone dotfiles manually and adapt.</div>
+      </div>
+
+      <div class="bootstrap-col-label" style="margin-top:2.5rem">inspect before running</div>
+      <div class="term-block" style="margin-top:0.75rem">
+        <div><span class="cmt"># view the script first</span></div>
+        <div><span class="prompt">$</span> <span class="cmd">curl -fsSL https://saeeedhany.github.io/dotfiles/install.sh | less</span></div>
+        <div></div>
+        <div><span class="cmt"># or clone and run locally</span></div>
+        <div><span class="prompt">$</span> <span class="cmd">git clone --depth=1 https://github.com/saeeedhany/dotfiles.git</span></div>
+        <div><span class="prompt">$</span> <span class="cmd">bash dotfiles/install.sh</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    built by <a href="https://github.com/saeeedhany">saeeedhany</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/saeeedhany/parchment.nvim">parchment</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/saeeedhany/overcast.nvim">overcast</a>
+  </div>
+  <div class="footer-right">
+    <a href="https://github.com/saeeedhany" target="_blank">github</a>
+    <a href="https://github.com/saeeedhany/dotfiles" target="_blank">dotfiles</a>
+  </div>
+</footer>
+
+<script>
+  // ── scroll reveal ──
+  const observer = new IntersectionObserver(
+    (entries) => entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    }),
+    { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+  );
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ── hero mouse-follow radial glow ──
+  document.querySelectorAll('.hero-half').forEach(half => {
+    half.addEventListener('mousemove', (e) => {
+      const rect = half.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width  * 100).toFixed(1) + '%';
+      const y = ((e.clientY - rect.top)  / rect.height * 100).toFixed(1) + '%';
+      half.style.setProperty('--mx', x);
+      half.style.setProperty('--my', y);
+    });
+  });
+
+  // ── copy one-liner ──
+  function copyOneliner() {
+    const raw = 'bash <(curl -fsSL https://saeeedhany.github.io/dotfiles/install.sh)';
+    navigator.clipboard.writeText(raw).then(() => {
+      const btn   = document.getElementById('copy-btn');
+      const label = document.getElementById('copy-label');
+      btn.classList.add('copied');
+      label.textContent = 'copied';
+      setTimeout(() => { btn.classList.remove('copied'); label.textContent = 'copy'; }, 2000);
+    });
+  }
+</script>
+</body>
+
+</html>
