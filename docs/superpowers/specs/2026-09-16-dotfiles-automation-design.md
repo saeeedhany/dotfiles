@@ -174,21 +174,39 @@ commit. Verified before vendoring: `config.h` is byte-identical to
 
 ### dwmblocks reconstruction
 
-No source survives. Clone `torrinfail/dwmblocks`, vendor it, and write
-`blocks.def.h` from the block order recovered out of the installed binary's
-string table:
+No source survives. Clone `torrinfail/dwmblocks`, vendor it, and rebuild
+`blocks.def.h` from the installed binary.
 
-```
-ram_usage, ram_temp, cpu_temp, gpu_temp,
-vram_usage, vram_temp, volume, battery, date_time
-```
+The reconstruction is exact, not a guess. The whole `blocks[]` array is
+intact in the binary's `.data.rel.ro` section as nine 24-byte
+`{const char *icon; const char *command; int interval; int signal;}`
+records, with the icon and command strings in `.rodata` and the delimiter
+in `.data`. Decoded:
+
+| # | Icon | Command | Interval | Signal |
+|---|---|---|---|---|
+| 1 | `U+F035B` | `scripts/ram_usage.sh` | 2 | 0 |
+| 2 | `U+F0504` | `scripts/ram_temp.sh` | 5 | 0 |
+| 3 | `U+F02DB` | `scripts/cpu_temp.sh` | 2 | 0 |
+| 4 | `U+F08AE` | `scripts/gpu_temp.sh` | 2 | 0 |
+| 5 | `U+F0FB2` | `scripts/vram_usage.sh` | 2 | 0 |
+| 6 | `U+F0FB4` | `scripts/vram_temp.sh` | 5 | 0 |
+| 7 | `U+F028` | `scripts/volume` | 1 | 0 |
+| 8 | `U+F240` | `scripts/battery` | 30 | 0 |
+| 9 | `U+F073` | `scripts/date_time` | 1 | 0 |
+
+Each icon is followed by one space; every command path is prefixed
+`~/.config/dwmblocks/scripts/`. Delimiter recovered as `" | "`.
 
 All nine scripts exist and are intact in `~/.config/dwmblocks/scripts/`.
 
-**Not recoverable:** per-block delimiters, update intervals, and signal
-numbers. Defaults will be chosen (1 s for `date_time`, 10 s for temperature
-and usage blocks, 0 with signal for `volume`) and flagged in the README as
-the one place the reconstruction is a guess rather than a copy.
+**Only uncertain value:** `delimLen`. Upstream sets it to 5 for a 3-character
+delimiter (it is a buffer stride, not a string length), and the `.data`
+layout does not let it be attributed unambiguously. Upstream's 5 is used;
+the rendered bar is identical either way.
+
+These icons require a Nerd Font, which is why `ttf-0xproto-nerd` is a hard
+dependency rather than a cosmetic one.
 
 ## Packages
 
@@ -324,7 +342,7 @@ Claiming it without one repeats the existing script's failure mode.
 
 | Risk | Mitigation |
 |---|---|
-| dwmblocks intervals are guessed | Flagged in README; single known-inexact spot |
+| `delimLen` is the one unrecovered value | Upstream default used; visually identical |
 | Symlinking `~/.config/suckless` puts root-built `.o` files under the repo | `.gitignore` covers them; `make clean` before first build |
 | Replacing live configs with symlinks | Every target backed up to `.bak.<ts>` before touching |
 | Curated list misses a package | `verify` catches missing binaries; `--full` is the fallback |
