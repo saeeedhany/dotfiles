@@ -1,6 +1,6 @@
-# ThePrimeSetup.conf
+# dots
 
-**ThePrimeSetup.conf** is a curated collection of configuration files and daily-use tools that power my Arch Linux environment.
+**dots** is a curated collection of configuration files and daily-use tools that power my Arch Linux (btw) environment.
 
 This repository reflects a systems-oriented, minimalist workflow focused on efficiency, clarity, and full control over the development environment.
 
